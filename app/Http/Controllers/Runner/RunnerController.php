@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Runner;
+
 use App\Http\Controllers\Controller;
 
-use App\Runner;
+use App\Http\Requests\RunnerRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Domain\Runner\Runner;
 
 class RunnerController extends Controller
 {
@@ -25,24 +28,46 @@ class RunnerController extends Controller
      */
     public function create()
     {
-        return view('runner.create');
+        $races = [
+            0 => 'Selecione sua corrida',
+            1 => 'Corre de verdade',
+            2 => 'Corre de verdade',
+            3 => 'Corre de verdade'
+        ];
+
+        return view('runner.create', [
+            'races' => $races
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param RunnerRequest $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Request $request)
+    public function store(RunnerRequest $request)
     {
-        //
+        $runner = Runner::where('cpf', 'like', $request->cpf)->first();
+
+        if (!$runner) {
+            $runner = new Runner;
+            $runner->name = $request->name;
+            $runner->cpf = $request->cpf;
+            $runner->born_at = Carbon::createFromFormat('d/m/Y', $request->born_at)->toDateTimeString();
+            $runner->save();
+        }
+
+        $runner->races()->attach($request->race);
+
+        return redirect(route('runner.create'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Runner  $runner
+     * @param  \App\Runner $runner
      * @return \Illuminate\Http\Response
      */
     public function show(Runner $runner)
@@ -53,7 +78,7 @@ class RunnerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Runner  $runner
+     * @param  \App\Runner $runner
      * @return \Illuminate\Http\Response
      */
     public function edit(Runner $runner)
@@ -64,8 +89,8 @@ class RunnerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Runner  $runner
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Runner $runner
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Runner $runner)
@@ -76,7 +101,7 @@ class RunnerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Runner  $runner
+     * @param  \App\Runner $runner
      * @return \Illuminate\Http\Response
      */
     public function destroy(Runner $runner)

@@ -11,4 +11,12 @@ class Runner extends Model
       'cpf',
       'born_at'
     ];
+
+    /**
+     * The roles that belong to the user.
+     */
+    public function races()
+    {
+        return $this->belongsToMany('Domain\Race\Race')->withTimestamps();
+    }
 }

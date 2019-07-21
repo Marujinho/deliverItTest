@@ -41,5 +41,7 @@
             @yield('content')
         </main>
     </div>
+    <script src="{{ asset('js/jquery-3.4.1.js') }}" type="text/javascript"></script>
+    @yield('js')
 </body>
 </html>

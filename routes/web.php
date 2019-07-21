@@ -1,20 +1,10 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/criar-corredor', 'Runner\RunnerController@create')->name('runner.create');
+Route::get('/criar/corredor', 'Runner\RunnerController@create')->name('runner.create');
+Route::post('/criar/corredor', 'Runner\RunnerController@store')->name('runner.store');
 
-Route::get('/criar-prova', 'Race\RaceController@create')->name('race.create');
+Route::get('/criar/prova', 'Race\RaceController@create')->name('race.create');
