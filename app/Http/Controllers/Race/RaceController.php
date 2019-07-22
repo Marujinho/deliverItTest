@@ -3,29 +3,24 @@
 namespace App\Http\Controllers\Race;
 use App\Http\Controllers\Controller;
 
-use App\Race;
+use Domain\Race\RaceRepository;
 use Illuminate\Http\Request;
+use App\Http\Requests\RaceRequest;
+use Carbon\Carbon;
 
 class RaceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected $race;
+
+    public function __construct(RaceRepository $race)
     {
-        //
+        $this->race = $race;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+
+        return view('race.create');
     }
 
     /**
@@ -34,53 +29,13 @@ class RaceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RaceRequest $request)
     {
-        //
+        $this->race->storeRace($request);
+
+        return redirect()->route('race.create')->with('success', 'Corrida criada com sucesso!');
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Race  $race
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Race $race)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Race  $race
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Race $race)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Race  $race
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Race $race)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Race  $race
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Race $race)
-    {
-        //
-    }
 }

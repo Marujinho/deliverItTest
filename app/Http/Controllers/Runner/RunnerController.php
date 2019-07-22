@@ -8,32 +8,24 @@ use App\Http\Requests\RunnerRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Domain\Runner\Runner;
+use Domain\Runner\RunnerRepository;
+use Domain\Race\RaceRepository;
 
 class RunnerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected $runner;
+    protected $race;
+
+    public function __construct(RunnerRepository $runner, RaceRepository $race)
     {
-        //
+        $this->runner = $runner;
+        $this->race = $race;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $races = [
-            0 => 'Selecione sua corrida',
-            1 => 'Corre de verdade',
-            2 => 'Corre de verdade',
-            3 => 'Corre de verdade'
-        ];
+        $races = $this->race->getRaces();
+        $races = $this->race->prepareForSelect($races);
 
         return view('runner.create', [
             'races' => $races
@@ -49,63 +41,18 @@ class RunnerController extends Controller
      */
     public function store(RunnerRequest $request)
     {
+        //Verifica se ja existe esse corredor no banco
         $runner = Runner::where('cpf', 'like', $request->cpf)->first();
-
+        
+        //Se esse corredor nao existe ele cria um novo
         if (!$runner) {
-            $runner = new Runner;
-            $runner->name = $request->name;
-            $runner->cpf = $request->cpf;
-            $runner->born_at = Carbon::createFromFormat('d/m/Y', $request->born_at)->toDateTimeString();
-            $runner->save();
+           $runner = $this->runner->storeRunner($request);
         }
 
+        //liga os corredores as provas
         $runner->races()->attach($request->race);
 
-        return redirect(route('runner.create'));
+        return redirect()->route('runner.create')->with('success', 'Corredor cadastrado na corrida selecionada com sucesso');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Runner $runner
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Runner $runner)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Runner $runner
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Runner $runner)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Runner $runner
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Runner $runner)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Runner $runner
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Runner $runner)
-    {
-        //
-    }
 }

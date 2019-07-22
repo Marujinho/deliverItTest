@@ -1,12 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Result;
 
-use App\Result;
+use App\Http\Controllers\Controller;
+use Domain\Result\Result;
 use Illuminate\Http\Request;
+use Domain\Race\RaceRepository;
+use Domain\Runner\RunnerRepository;
 
 class ResultController extends Controller
 {
+    protected $runner;
+    protected $race;
+
+
+    public function __construct(RunnerRepository $runner, RaceRepository $race)
+    {
+        $this->race = $race;
+        $this->runner = $runner;
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +38,15 @@ class ResultController extends Controller
      */
     public function create()
     {
-        //
+        $runners = $this->runner->getRunners();
+        $runners = $this->runner->prepareForSelect($runners);
+        $races = $this->race->getRaces();
+        $races = $this->race->prepareForSelect($races);
+
+        return view('result.create', [
+          'races' => $races,
+          'runners' => $runners
+        ]);
     }
 
     /**

@@ -25,7 +25,7 @@ class RunnerRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'  => 'required|min:5|max:150',
+            'name'  => 'required|max:150',
             'cpf' => 'required|min:14|max:14',
             'born_at' => 'required|date|date_format:d/m/Y',
             'race' => ['required','exists:races,id',new RaceSameTimes($this->cpf)]
@@ -39,6 +39,11 @@ class RunnerRequest extends FormRequest
     {
         return [
             'race.exists' => 'Selecione uma corrida válida.',
+            'cpf.required' => 'Campo CPF é obrigatório',
+            'born_at.required' => 'Campo data de nascimento é obrigatório',
+            'name.required' => 'Campo Nome é obrigatório',
+            'born_at.date' => 'Campo data de nascimento inválido',
+            'born_at.date_format' => 'Formato deve ser dia/mês/ano'
         ];
     }
 }

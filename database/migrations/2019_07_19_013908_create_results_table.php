@@ -19,8 +19,7 @@ class CreateResultsTable extends Migration
             $table->foreign('runner_id')->references('id')->on('runners');
             $table->integer('race_id')->unsigned();
             $table->foreign('race_id')->references('id')->on('races');
-            $table->datetime('started_at');
-            $table->datetime('finished_at');
+            $table->time('time_result');
             $table->timestamps();
         });
     }
